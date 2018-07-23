@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.madprateek.inventorymap.ModelClasses.InventoryModel;
+import com.madprateek.inventorymap.ModelClasses.MapDetailsModel;
+import com.madprateek.inventorymap.ModelClasses.QualityCheckModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String WEAVER_ON_LOOM_DATE = "weaverOnLoomDate";
     private static final String MERCHANT_NAME = "merchantName";
     private static final String TERRITORY_HEAD = "territoryHead";
+    private static final String LENGTH_IN_INCHES = "lengthInInches";
+    private static final String KARNI_1 = "karni1";
+    private static final String KARNI_2 = "karni2";
+    private static final String DHARAWAT = "dharawat";
+    private static final String SAVE_DATE = "saveDate";
+    private static final String MAP_DETAILS = "mapDetails";
+    private static final String LOCATION = "location";
+    private static final String QUALITY_CHECK = "qualityCheck";
+    private static final String TANI = "tani";
+    private static final String COLOR = "color";
+
     SQLiteDatabase db;
 
     public DatabaseHelper(Context context) {
@@ -61,6 +74,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 + MERCHANT_NAME + " TEXT," + TERRITORY_HEAD + " TEXT)";
         db.execSQL(CREATION_RUGLINE);
         Log.d("TAG","Rugline table created");
+
+
+        String CREATION_MAP_DETAILS = "CREATE TABLE "+MAP_DETAILS+" (" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + OTN_NO + " TEXT,"
+                + LENGTH_IN_INCHES + " INTEGER,"
+                + KARNI_1 + " INTEGER," + KARNI_2 + " INTEGER," + DHARAWAT + " INTEGER," + SAVE_DATE + " TEXT," + LOCATION + " TEXT)";
+        db.execSQL(CREATION_MAP_DETAILS);
+        Log.d("TAG","Map Details table created");
+
+
+        String CREATION_QUALITY_CHECK = "CREATE TABLE "+QUALITY_CHECK+" (" +KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + MAP_SERIAL_NO + " TEXT,"
+                + DHARAWAT + " TEXT," + TANI + " TEXT," + DESIGN + " TEXT," + COLOR + " TEXT)";
+        db.execSQL(CREATION_QUALITY_CHECK);
+        Log.d("TAG","Quality check table created");
     }
 
     @Override
@@ -100,13 +126,42 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         values.put(MERCHANT_NAME, inventoryModel.getMERCHANT_NAME());
         values.put(TERRITORY_HEAD, inventoryModel.getTERRITORY_HEAD());
         db.insert(RUGLINE,null,values);
-        Log.d("TAG","Rugline Row Added");
+       // Log.d("TAG","Rugline Row Added");
     }
+
+    public void addMapDetails(MapDetailsModel mapDetails){
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(OTN_NO, mapDetails.getOtnNo());
+        values.put(LENGTH_IN_INCHES, mapDetails.getLengthInInches());
+        values.put(KARNI_1, mapDetails.getKarni1());
+        values.put(KARNI_2, mapDetails.getKarni2());
+        values.put(DHARAWAT, mapDetails.getDharawat());
+        values.put(SAVE_DATE, mapDetails.getSaveDate());
+        values.put(LOCATION, mapDetails.getLocation());
+        db.insert(MAP_DETAILS, null, values);
+        Log.d("TAG","map Details Row Added");
+    }
+
+
+    public void addQualityCheck(QualityCheckModel qualityCheckModel){
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(MAP_SERIAL_NO, qualityCheckModel.getMapNo());
+        values.put(DHARAWAT, qualityCheckModel.getDharawat());
+        values.put(TANI, qualityCheckModel.getTani());
+        values.put(DESIGN, qualityCheckModel.getDesign());
+        values.put(COLOR, qualityCheckModel.getColor());
+        db.insert(QUALITY_CHECK, null, values);
+        Log.d("TAG","quality check Row Added");
+    }
+
 
     public List<InventoryModel> getAllMaps(String mapNo){
 
         List<InventoryModel> fetchMaps = new ArrayList<>();
-        Log.d("TAG",mapNo);
         String selectQuery = "SELECT * FROM " + RUGLINE + " WHERE " + MAP_SERIAL_NO + " = " + mapNo;
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
@@ -137,5 +192,73 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }
         Log.d("TAG","Size is" + fetchMaps.size());
         return  fetchMaps;
+    }
+
+    public List<MapDetailsModel> getAllMapDetails(){
+
+        List<MapDetailsModel> fetchDetails = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + MAP_DETAILS;
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        MapDetailsModel mapDetails;
+
+        if (cursor.moveToFirst()){
+
+            do {
+                mapDetails = new MapDetailsModel();
+                mapDetails.setOtnNo(cursor.getString(1));
+                mapDetails.setLengthInInches(cursor.getString(2));
+                mapDetails.setKarni1(cursor.getString(3));
+                mapDetails.setKarni2(cursor.getString(4));
+                mapDetails.setDharawat(cursor.getString(5));
+                mapDetails.setSaveDate(cursor.getString(6));
+                mapDetails.setLocation(cursor.getString(7));
+                fetchDetails.add(mapDetails);
+            }while (cursor.moveToNext());
+        }
+        return fetchDetails;
+    }
+
+
+    public List<QualityCheckModel> getAllQualityCheck(){
+
+        List<QualityCheckModel> fetchDetails = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + QUALITY_CHECK;
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        QualityCheckModel qualityCheckModel;
+
+        if (cursor.moveToFirst()){
+
+            do {
+                qualityCheckModel = new QualityCheckModel();
+                qualityCheckModel.setMapNo(cursor.getString(1));
+                qualityCheckModel.setDharawat(cursor.getString(2));
+                qualityCheckModel.setTani(cursor.getString(3));
+                qualityCheckModel.setDesign(cursor.getString(4));
+                qualityCheckModel.setColor(cursor.getString(5));
+                fetchDetails.add(qualityCheckModel);
+            }while (cursor.moveToNext());
+        }
+        return fetchDetails;
+    }
+    public void deleteAllMaps(){
+        db = this.getWritableDatabase();
+        db.delete(RUGLINE,null,null);
+    }
+
+    public void deleteMapDetails(MapDetailsModel mapDetail){
+        db = this.getWritableDatabase();
+        db.delete(MAP_DETAILS,KEY_ID + " = ?", new String[]{String.valueOf(mapDetail.getId())});
+    }
+
+    public void deleteAllMapDetails(){
+        db = this.getWritableDatabase();
+        db.delete(MAP_DETAILS, null, null);
+    }
+
+    public void deleteAllQualityCheck(){
+        db = this.getWritableDatabase();
+        db.delete(QUALITY_CHECK, null, null);
     }
 }

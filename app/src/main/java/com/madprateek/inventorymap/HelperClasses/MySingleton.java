@@ -1,4 +1,4 @@
-package com.madprateek.inventorymap;
+package com.madprateek.inventorymap.HelperClasses;
 
 import android.content.Context;
 

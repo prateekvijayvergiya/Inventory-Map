@@ -1,10 +1,12 @@
-package com.madprateek.inventorymap;
+package com.madprateek.inventorymap.HelperClasses;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
+
+import com.madprateek.inventorymap.Activities.LoginActivity;
 
 import java.util.HashMap;
 

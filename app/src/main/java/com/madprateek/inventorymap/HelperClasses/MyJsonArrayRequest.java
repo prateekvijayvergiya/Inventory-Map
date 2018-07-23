@@ -1,4 +1,4 @@
-package com.madprateek.inventorymap;
+package com.madprateek.inventorymap.HelperClasses;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -16,6 +16,7 @@ public class MyJsonArrayRequest extends JsonRequest<JSONArray> {
     public MyJsonArrayRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         super(method, url, String.valueOf(jsonRequest), listener, errorListener);
     }
+
         //(jsonRequest == null) ? null : jsonRequest.toString()
     @Override
     protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {

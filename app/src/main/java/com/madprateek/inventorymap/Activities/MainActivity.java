@@ -1,13 +1,15 @@
-package com.madprateek.inventorymap;
+package com.madprateek.inventorymap.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -17,12 +19,16 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.madprateek.inventorymap.HelperClasses.DatabaseHelper;
+import com.madprateek.inventorymap.HelperClasses.MyJsonArrayRequest;
+import com.madprateek.inventorymap.HelperClasses.MySingleton;
 import com.madprateek.inventorymap.ModelClasses.InventoryModel;
+import com.madprateek.inventorymap.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +39,7 @@ public class MainActivity extends AppCompatActivity{
     Button mBtn,mSearchBtn;
     EditText mSearchText;
     DatabaseHelper db;
+    FillDetailsActivity fillDetailsActivity;
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -44,10 +51,13 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Inventory");
 
+        //db.deleteAllMaps();
+
         db = new DatabaseHelper(this);
         mBtn = (Button) findViewById(R.id.btn);
         mSearchBtn = (Button) findViewById(R.id.searchBtn);
         mSearchText = (EditText) findViewById(R.id.mapText);
+        fillDetailsActivity = new FillDetailsActivity(MainActivity.this);
 
         mBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,9 +75,20 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
 
                 String mapNo = mSearchText.getText().toString();
-                Intent sendIntent = new Intent(MainActivity.this,MapDetailsActivity.class);
-                sendIntent.putExtra("mapNo",mapNo);
-                startActivity(sendIntent);
+                if (TextUtils.isEmpty(mapNo)){
+                    mSearchText.setError("Please provide Map No");
+                }else {
+                    Intent sendIntent = new Intent(MainActivity.this,MapDetailsActivity.class);
+                    ArrayList<InventoryModel> inventoryModels = (ArrayList<InventoryModel>) db.getAllMaps(mapNo);
+                    if (inventoryModels.size() == 0){
+                        Toast.makeText(getApplicationContext(),"Please provide valid Map No",Toast.LENGTH_SHORT).show();
+                    }else {
+                        sendIntent.putExtra("mapNo",mapNo);
+                        startActivity(sendIntent);
+                    }
+
+                }
+
             }
         });
 
@@ -139,7 +160,6 @@ public class MainActivity extends AppCompatActivity{
                 currentStatus, prodOrderNo, otnNo, location, branchManager, weaverName, runningLength, remainingWork, actualWeaverIssueDate,
                 revisedOrderDueDate,qs, ptnNo, weaverOnLoomDate, merchantName, territoryHead);
         db.addRugline(inventoryModel);
-        Log.d(TAG,"Rugline Row Added");
     }
 
     private void sendReq() throws JSONException {

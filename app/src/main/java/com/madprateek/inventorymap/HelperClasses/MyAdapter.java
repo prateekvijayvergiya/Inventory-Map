@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.madprateek.inventorymap.FillDetailsActivity;
+import com.madprateek.inventorymap.Activities.FillDetailsActivity;
 import com.madprateek.inventorymap.ModelClasses.InventoryModel;
 import com.madprateek.inventorymap.R;
 
@@ -54,6 +54,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         final InventoryModel inventoryModel = inventoryModels.get(position);
         holder.mOtnValue.setText(inventoryModel.getOTN_NO());
         holder.mPreviousValue.setText(String.valueOf(inventoryModel.getRUNNING_LENGTH()));
+        final String length = String.valueOf(inventoryModel.getRUNNING_LENGTH());
         holder.mRemainingValue.setText(String.valueOf(inventoryModel.getREMAINING_WORK()));
 
         holder.mFillDetailsBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +63,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                 Intent detailsIntent = new Intent(context, FillDetailsActivity.class);
                 detailsIntent.putExtra("otnNo",inventoryModel.getOTN_NO());
+                detailsIntent.putExtra("previousLength",length);
                 detailsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(detailsIntent);
             }

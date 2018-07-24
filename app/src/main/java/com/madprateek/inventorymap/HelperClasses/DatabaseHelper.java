@@ -54,8 +54,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String MAP_DETAILS = "mapDetails";
     private static final String LOCATION = "location";
     private static final String QUALITY_CHECK = "qualityCheck";
-    private static final String TANI = "tani";
-    private static final String COLOR = "color";
+    private static final String TANI_Dhili = "tani_dhili";
+    private static final String TANI_Tight = "tani_tight";
+    private static final String COLOR_Sahi = "color_sahi";
+    private static final String COLOR_Galat = "color_galat";
+    private static final String Dharawat_Kam = "dharawat_kam";
+    private static final String Dharawat_Jyada = "dharawat_jyada";
+    private static final String Design_Galat = "design_galat";
+    private static final String Design_Sahi = "design_sahi";
 
     SQLiteDatabase db;
 
@@ -84,7 +90,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 
         String CREATION_QUALITY_CHECK = "CREATE TABLE "+QUALITY_CHECK+" (" +KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + MAP_SERIAL_NO + " TEXT,"
-                + DHARAWAT + " TEXT," + TANI + " TEXT," + DESIGN + " TEXT," + COLOR + " TEXT)";
+                + Dharawat_Kam + " TEXT," + Dharawat_Jyada + " TEXT," + TANI_Dhili + " TEXT," + TANI_Tight + " TEXT," + Design_Sahi + " TEXT,"
+                + Design_Galat + " TEXT," + COLOR_Sahi + " TEXT," + COLOR_Galat + " TEXT)";
         db.execSQL(CREATION_QUALITY_CHECK);
         Log.d("TAG","Quality check table created");
     }
@@ -150,10 +157,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(MAP_SERIAL_NO, qualityCheckModel.getMapNo());
-        values.put(DHARAWAT, qualityCheckModel.getDharawat());
-        values.put(TANI, qualityCheckModel.getTani());
-        values.put(DESIGN, qualityCheckModel.getDesign());
-        values.put(COLOR, qualityCheckModel.getColor());
+        values.put(Dharawat_Kam, qualityCheckModel.getDharawatKam());
+        values.put(Dharawat_Jyada, qualityCheckModel.getDharawatJyada());
+        values.put(TANI_Dhili, qualityCheckModel.getTaniDhili());
+        values.put(TANI_Tight, qualityCheckModel.getTaniTight());
+        values.put(Design_Sahi, qualityCheckModel.getDesignSahi());
+        values.put(Design_Galat, qualityCheckModel.getDesignGalat());
+        values.put(COLOR_Sahi, qualityCheckModel.getColorSahi());
+        values.put(COLOR_Galat, qualityCheckModel.getColorGalat());
         db.insert(QUALITY_CHECK, null, values);
         Log.d("TAG","quality check Row Added");
     }
@@ -233,10 +244,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             do {
                 qualityCheckModel = new QualityCheckModel();
                 qualityCheckModel.setMapNo(cursor.getString(1));
-                qualityCheckModel.setDharawat(cursor.getString(2));
-                qualityCheckModel.setTani(cursor.getString(3));
-                qualityCheckModel.setDesign(cursor.getString(4));
-                qualityCheckModel.setColor(cursor.getString(5));
+                qualityCheckModel.setDharawatKam(cursor.getString(2));
+                qualityCheckModel.setDharawatJyada(cursor.getString(3));
+                qualityCheckModel.setTaniDhili(cursor.getString(4));
+                qualityCheckModel.setTaniTight(cursor.getString(5));
+                qualityCheckModel.setDesignSahi(cursor.getString(6));
+                qualityCheckModel.setDesignGalat(cursor.getString(7));
+                qualityCheckModel.setColorSahi(cursor.getString(8));
+                qualityCheckModel.setColorGalat(cursor.getString(9));
                 fetchDetails.add(qualityCheckModel);
             }while (cursor.moveToNext());
         }
